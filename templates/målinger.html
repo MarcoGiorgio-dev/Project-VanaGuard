@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}
+site 2
+{% endblock %}
+{% block content %}
+<p>Målinger</p>
+
+<img id="temp-chart" src="" alt="Temperature chart" />
+<img id="hum-chart"  src="" alt="Humidity chart" />
+
+<button onclick="socket.emit('request_update')">Refresh now</button>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const socket = io();
+
+  socket.on('sensor_update', (data) => {
+    document.getElementById('temp-chart').src = 'data:image/png;base64,' + data.temp_chart;
+    document.getElementById('hum-chart').src  = 'data:image/png;base64,' + data.hum_chart;
+  });
+</script>
+{% endblock %}

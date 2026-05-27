@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}
+Yolo
+{% endblock %}
+{% block content %}
+<p>Live kamera</p>
+
+<div class="alert alert-warning">
+    Kamerastream er ikke tilgængelig — kameradata gemmes ikke i databasen.
+</div>
+
+<p><strong>Heste på gulvet (seneste måling):</strong> <span id="horse-count">—</span></p>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const socket = io();
+
+  socket.on('sensor_update', (data) => {
+    const latest = data.latest;
+    if (!latest) return;
+    document.getElementById('horse-count').textContent = latest.horse_down_count ?? '—';
+  });
+</script>
+{% endblock %}

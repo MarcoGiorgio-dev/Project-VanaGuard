@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}Alarm{% endblock %}
+
+{% block content %}
+  <h2 id="status">Loader...</h2>
+  <p>Batteri: <span id="bat">-</span>%</p>
+  <p>ESP32: <span id="esp">-</span></p>
+  <button class="btn btn-danger" onclick="setAlarm(true)">🚨 Aktiver alarm</button>
+  <button class="btn btn-success" onclick="setAlarm(false)">✅ Sluk alarm</button>
+
+  <script>
+    async function poll() {
+      const r = await fetch('/api/status');
+      const d = await r.json();
+      document.getElementById('status').textContent = d.alarm ? '🚨 ALARM!' : '✅ Ingen alarm';
+      document.getElementById('bat').textContent = d.battery ?? '-';
+      document.getElementById('esp').textContent = d.online ? 'Online' : 'Offline';
+    }
+
+    async function setAlarm(on) {
+      await fetch('/api/alarm', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({alarm: on})
+      });
+      poll();
+    }
+
+    poll();
+    setInterval(poll, 3000);
+  </script>
+{% endblock %}

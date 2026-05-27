@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}
+Brandalarm
+{% endblock %}
+{% block content %}
+<p>Live røgmåling</p>
+
+<table class="table table-bordered w-auto">
+    <tr>
+        <th>Status</th>
+        <th>Ventilator</th>
+        <th>Vindue</th>
+        <th>Sidst opdateret</th>
+    </tr>
+    <tr>
+        <td id="smoke-status">—</td>
+        <td id="fan-status">—</td>
+        <td id="window-status">—</td>
+        <td id="smoke-time">—</td>
+    </tr>
+</table>
+
+<p id="smoke-alert" style="color: red; font-weight: bold; display: none;">
+    ⚠️ Røg registreret!
+</p>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const socket = io();
+
+  socket.on('sensor_update', (data) => {
+    const latest = data.latest;
+    if (!latest) return;
+
+    const smokeDetected = latest.smoke_detected;
+    document.getElementById('smoke-status').textContent  = smokeDetected ? '🔥 Røg!' : '✅ Ingen røg';
+    document.getElementById('fan-status').textContent    = latest.fan_on      ? 'Tændt' : 'Slukket';
+    document.getElementById('window-status').textContent = latest.window_open ? 'Åbent' : 'Lukket';
+    document.getElementById('smoke-time').textContent    = latest.timestamp ?? '—';
+
+    document.getElementById('smoke-alert').style.display = smokeDetected ? 'block' : 'none';
+  });
+</script>
+{% endblock %}
