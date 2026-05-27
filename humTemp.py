@@ -24,7 +24,7 @@ def _read_loop():
                 print(f"Temperatur: {_temp}  Fugtighed: {_hum}")
                 break
             sleep(0.5)
-        sleep(1800)
+        sleep(10)
 
 _thread = threading.Thread(target=_read_loop, daemon=True)
 _thread.start()
