@@ -27,11 +27,13 @@ laying_frames = 0
 laying_threshold = 3
 smoke_timer = time()
 
+# Printer kun fejl beskeder fra libcamera, så terminalen ikke bliver spammet.
 os.environ["LIBCAMERA_LOG_LEVELS"] = "ERROR"
 
 _last_msg = None
 _last_msg_time = 0
 
+# Printer kun hvis beskeden er ny, eller hvis 30 minutter er gået siden sidst.
 def smart_print(msg):
   global _last_msg, _last_msg_time
   if msg != _last_msg or time() - _last_msg_time > 1800:
@@ -39,6 +41,7 @@ def smart_print(msg):
     _last_msg = msg
     _last_msg_time = time()
 
+# Yolo setup, vi skal bruge onnx for bedste perfomance uden at brænda pi'en af.
 yolo_session = ort.InferenceSession(
     "best.onnx",
     providers=["CPUExecutionProvider"]
@@ -70,6 +73,7 @@ try:
 
         insert_sensor_reading_async(hum, temp, fan_on, window_open, smoke_detected, horse_down_counter)
 
+      # Blæser kontrol.
       if temp >= 25 and not fan_on:
         smart_print("Høj temperatur, tænder blæser.")
         turn_on_fan(9)
@@ -79,6 +83,7 @@ try:
         turn_off_fan(9)
         fan_on = False
 
+      # Vindue kontrol.
       if hum >= 60 and not window_open:
         smart_print("Høj fugtighed, åbner vindue.")
         open_window()
@@ -88,11 +93,13 @@ try:
         close_window()
         window_open = False
 
+      # Hvis alle forhold er gode.
       if not fan_on and not window_open and temp < 25 and hum < 60:
         smart_print("Forhold er optimale, ingen handling påkrævet.")
 
     motion = read_pir()
 
+    # Hvis ingen bevægelse opfanges - kun til sikring af kamera nedlukning.
     if not motion:
       if camera_active:
         if time() - motion_timer > 60:
@@ -101,6 +108,7 @@ try:
           camera_active = False
           motion_timer = None
 
+    # Hvis bevægelse opfanges.
     else:
       if motion_timer is None:
         motion_timer = time()
@@ -112,6 +120,7 @@ try:
 
       if time() - motion_timer < 60:
 
+        # Yolo aflæsning ved brug af funktion fra yoloFunctions.py.
         frame_resized = get_processed_frame()
 
         if frame_resized is None:
@@ -158,3 +167,4 @@ finally:
     if camera_active:
         close_camera()
     janitor()
+  
