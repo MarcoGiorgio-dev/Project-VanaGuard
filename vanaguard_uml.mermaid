@@ -1,0 +1,82 @@
+flowchart TD
+    A([Start]) --> B[pir_setup\nfan_setup\nload YOLO model]
+    B --> C{smoke_timer\n> 30s?}
+
+    C -->|Yes| D[smoke_check]
+    D --> C2{smoke\ndetected?}
+    C -->|No| C2
+
+    C2 -->|Yes| E[close_window\nturn_off_fan\ninsert_sensor_reading_async]
+    C2 -->|No| F{sensor_timer\n> 10s?}
+
+    F -->|Yes| G[get_humTemp]
+    G --> H{Reading\nvalid?}
+    H -->|Yes| I[Update hum & temp]
+    H -->|No| J[smart_print: fejl]
+    I --> K[insert_sensor_reading_async]
+    J --> K
+
+    F -->|No| L[Fan control]
+    K --> L
+
+    L --> L1{temp >= 25\nand fan off?}
+    L1 -->|Yes| L2[turn_on_fan]
+    L1 -->|No| L3{temp < 25\nand fan on?}
+    L3 -->|Yes| L4[turn_off_fan]
+    L3 -->|No| L5[No action]
+
+    L2 --> M[Window control]
+    L4 --> M
+    L5 --> M
+
+    M --> M1{hum >= 60\nand window closed?}
+    M1 -->|Yes| M2[open_window]
+    M1 -->|No| M3{hum < 60\nand window open?}
+    M3 -->|Yes| M4[close_window]
+    M3 -->|No| M5[Forhold optimale]
+
+    M2 --> N[read_pir]
+    M4 --> N
+    M5 --> N
+    E --> N
+
+    N --> O{Motion\ndetected?}
+
+    O -->|No| P{Camera\nactive?}
+    P -->|Yes| P1{motion_timer\n> 60s?}
+    P1 -->|Yes| P2[kill_feed\ncamera_active = False]
+    P1 -->|No| Q[sleep 0.5s]
+    P -->|No| Q
+    P2 --> Q
+
+    O -->|Yes| R[Reset motion_timer]
+    R --> S{Camera\nactive?}
+    S -->|No| T[start_feed\ncamera_active = True]
+    S -->|Yes| U{motion_timer\n< 60s?}
+    T --> U
+
+    U -->|Yes| V[get_processed_frame]
+    V --> W{Frame\nvalid?}
+    W -->|No| Q
+    W -->|Yes| X[Run YOLO inference]
+    X --> Y{YOLO\nresult?}
+
+    Y -->|laying| Z[laying_frames ++\ncheck horse_down_counter]
+    Y -->|standing| AA[Reset laying_frames\nhorse_was_laying = False]
+    Y -->|None| AB[Ingen konklusion]
+
+    Z --> Q
+    AA --> Q
+    AB --> Q
+
+    U -->|No| AC[kill_feed\ncamera_active = False]
+    AC --> Q
+
+    Q --> C
+
+    Q --> QA{Exception?}
+    QA -->|KeyboardInterrupt| QB[Print: afbrudt]
+    QA -->|Other| QC[Print: fejl]
+    QB --> QD[close_camera\njanitor]
+    QC --> QD
+    QD --> QE([End])
