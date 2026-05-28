@@ -4,7 +4,7 @@ import time
 pir_pin = 27
 
 def pir_setup():
- GPIO.setup(pir_pin, GPIO.IN)  
+ GPIO.setup(pir_pin, GPIO.IN) 
  print("PIR Sensor klar! Afventer bevægelse.")
 
 def read_pir():
@@ -14,4 +14,4 @@ def read_pir():
     else:
         return False
  
-GPIO.setmode(GPIO.BCM) 
+GPIO.setmode(GPIO.BCM)
