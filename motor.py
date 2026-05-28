@@ -12,7 +12,7 @@ class Stepper:
         for p in pins:
             GPIO.setup(p, GPIO.OUT)
             GPIO.output(p, 0)
-
+            
         self.sequence = [
             [1,0,0,0],
             [1,1,0,0],
@@ -24,7 +24,6 @@ class Stepper:
             [1,0,0,1]
         ]
     def step(self, steps, direction=1):
-
         seq = self.sequence if direction == 1 else self.sequence[::-1]
         for _ in range(steps):
             for pattern in seq:
