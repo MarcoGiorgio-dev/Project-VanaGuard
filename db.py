@@ -2,9 +2,9 @@ import mysql.connector
 import threading
 
 DB_HOST = "10.187.222.169" 
-DB_PORT = 3306 
+DB_PORT = 3306
 
-DB_USER = "vanaguard"
+DB_USER = "vanaguard" 
 DB_PASS = "gruppe7!"
 
 DB_NAME = "heste_data"
