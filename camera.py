@@ -13,7 +13,6 @@ class Camera:
     def start(self):
         self.camera.start()
         sleep(2)
-        print("Kamera startet.")
     
     def get_frame(self):
         frame = self.camera.capture_array()
