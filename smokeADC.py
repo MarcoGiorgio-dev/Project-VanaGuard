@@ -11,7 +11,7 @@ def _timeout_handler(signum, frame):
 def smoke_check():
     try:
         signal.signal(signal.SIGALRM, _timeout_handler)
-        signal.alarm(2) 
+        signal.alarm(2)
 
         config = [0xC3, 0x83]
         bus.write_i2c_block_data(ADS1115_ADDRESS, 0x01, config)
@@ -20,7 +20,7 @@ def smoke_check():
         data = bus.read_i2c_block_data(ADS1115_ADDRESS, 0x00, 2)
         value = (data[0] << 8) | data[1]
 
-        signal.alarm(0)
+        signal.alarm(0) 
 
         if value > 32767:
             value -= 65536
