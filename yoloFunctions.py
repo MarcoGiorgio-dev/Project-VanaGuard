@@ -47,6 +47,7 @@ def is_horse_down(outputs):
         angle(mid1, mid2),
         angle(mid2, rear)
     ]
+
     main_angle = angle(head, rear)
 
     print(f"Hoved-til-bagkrop vinkel: {main_angle:.1f} grader")
@@ -61,3 +62,4 @@ def is_horse_down(outputs):
         return "standing"
 
     return None
+    
