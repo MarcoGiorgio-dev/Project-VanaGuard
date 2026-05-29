@@ -2,7 +2,7 @@ from motor import open_window, close_window, turn_on_fan, turn_off_fan, fan_setu
 from humTemp import get_humTemp
 from pirSensor import pir_setup, read_pir
 from time import sleep, time
-from videoFeed import live_feed, kill_feed, start_feed, get_processed_frame, close_camera
+from videoFeed import kill_feed, start_feed, get_processed_frame, close_camera
 from yoloFunctions import is_horse_down
 from smokeADC import smoke_check
 from db import insert_sensor_reading, insert_sensor_reading_async
