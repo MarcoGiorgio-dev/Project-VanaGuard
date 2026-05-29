@@ -8,22 +8,6 @@ def start_feed():
     camera = Camera()
     camera.start()
 
-def kill_feed():
-    global camera
-    if camera is not None:
-        camera.stop()
-        camera = None
-    cv2.destroyAllWindows()
-
-def live_feed():
-    if camera is None:
-        return None
-    frame = camera.get_frame()
-    if frame is None:
-        return None
-    cv2.waitKey(1)
-    return frame
-
 def get_processed_frame():
     if camera is None:
         return None
