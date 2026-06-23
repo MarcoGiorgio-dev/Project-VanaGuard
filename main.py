@@ -97,7 +97,7 @@ try:
       if camera_active:
         if time() - motion_timer > 60:
           smart_print("Ingen bevægelse i 1 minut — slukker kamera.")
-          kill_feed()
+          close_camera()
           camera_active = False
           motion_timer = None
 
@@ -145,7 +145,7 @@ try:
 
       else:
         smart_print("Ingen bevægelse i 1 minut — slukker kamera.")
-        kill_feed()
+        close_camera()
         camera_active = False
         motion_timer = None
 
